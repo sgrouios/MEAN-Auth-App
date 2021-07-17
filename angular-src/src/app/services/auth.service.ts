@@ -21,7 +21,7 @@ export class AuthService {
               private localStorageService: LocalStorageService) {}
 
   authenticateUser(authenticate: AuthenticateUser): Observable<Tokens> {
-    return this.http.post<Tokens>(`${this.apiUrl}/authenticate`, 
+    return this.http.post<Tokens>(`users/authenticate`, 
     authenticate, 
     ExclusionHeader.addExclusionHeader())
     .pipe(
