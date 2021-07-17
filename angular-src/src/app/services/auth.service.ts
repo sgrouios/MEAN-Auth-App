@@ -2,7 +2,6 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
 import { AccessToken } from '../models/access-token';
 import { AuthenticateUser } from '../models/authenticate-user';
 import { Tokens } from '../models/tokens';
@@ -15,7 +14,6 @@ import { LocalStorageService } from './local-storage.service';
   providedIn: 'root',
 })
 export class AuthService {
-  apiUrl = `${environment.apiUrl}/users`;
 
   constructor(private http: HttpClient,
               private localStorageService: LocalStorageService) {}
@@ -35,7 +33,7 @@ export class AuthService {
   }
 
   logout(refreshToken: string): Observable<string> {
-    return this.http.get<string>(`${this.apiUrl}/logout?refreshToken-${refreshToken}`)
+    return this.http.get<string>(`users/logout?refreshToken-${refreshToken}`)
     .pipe(
       catchError((err) => throwError(err)),
       tap(() => {
@@ -46,7 +44,7 @@ export class AuthService {
   }
 
   refreshToken(refreshToken: string): Observable<AccessToken> {
-    return this.http.post<AccessToken>(`${this.apiUrl}/refresh`, { token: refreshToken})
+    return this.http.post<AccessToken>(`users/refresh`, { token: refreshToken})
     .pipe(
       catchError((err) => throwError(err)),
       tap((token: AccessToken) => {
@@ -59,7 +57,7 @@ export class AuthService {
   registerUser(user: User): Observable<string> {
     return this.http
       .post<string>(
-        `${this.apiUrl}/register`,
+        `users/register`,
         user,
         ExclusionHeader.addExclusionHeader()
       )
@@ -67,7 +65,7 @@ export class AuthService {
   }
 
   getProfile(): Observable<UserProfile> {
-    return this.http.get<UserProfile>(`${this.apiUrl}/profile`)
+    return this.http.get<UserProfile>(`users/profile`)
     .pipe(
       catchError((err) => throwError(err))
     )
