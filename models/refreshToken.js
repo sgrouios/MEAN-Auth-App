@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const config = require('../config/database');
 
 // RefreshToken schema
 const RefreshTokenSchema = mongoose.Schema({

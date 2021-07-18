@@ -1,8 +1,9 @@
+const path = require('path');
+require('dotenv').config({path: path.resolve(__dirname, '../.env')});
 const express = require("express");
 const router = express.Router();
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
-const config = require("../config/database");
 const User = require("../models/user");
 const RefreshToken = require("../models/refreshToken");
 
@@ -35,10 +36,10 @@ router.post("/authenticate", (req, res, next) => {
       if (isMatch) {
         const { password, __v, _id, ...payload } = user._doc;
         payload["sub"] = user._id;
-        const accessToken = jwt.sign(payload, config.accessSecret, {
+        const accessToken = jwt.sign(payload, process.env.ACCESS_SECRET, {
           expiresIn: 36000, //10 hours
         });
-        const refreshToken = jwt.sign(payload, config.refreshSecret, {
+        const refreshToken = jwt.sign(payload, process.env.REFRESH_SECRET, {
           expiresIn: 604800, // 1 week
         });
 
@@ -82,7 +83,7 @@ router.get(
 // Test Refresh
 router.get("/refresh", (req, res, next) => {
   // Verify token
-  jwt.verify(req.body.token, config.refreshSecret, (err, decodedPayload) => {
+  jwt.verify(req.body.token, process.env.REFRESH_SECRET, (err, decodedPayload) => {
     if (err) throw err;
     if (!decodedPayload)
       res.json(403, {
@@ -110,7 +111,7 @@ router.get("/refresh", (req, res, next) => {
         });
       const { password, __v, _id, ...payload } = user._doc;
       payload["sub"] = user._id;
-      const accessToken = jwt.sign(payload, config.accessSecret, {
+      const accessToken = jwt.sign(payload, process.env.ACCESS_SECRET, {
         expiresIn: 36000, //10 hours
       });
 
