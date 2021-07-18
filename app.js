@@ -1,16 +1,16 @@
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
 const passport = require('passport');
 const mongoose = require('mongoose');
-const config = require('./config/database');
 
 // Connect to Database
-mongoose.connect(config.database, {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true, useUnifiedTopology: true});
 
 // On Connection
 mongoose.connection.on('connected', () => {
-    console.log('Connected to database ', config.database)
+    console.log('Connected to database ', process.env.MONGODB_URI)
 });
 
 // On Error 
@@ -23,7 +23,7 @@ const app = express();
 const users = require('./routes/users');
 
 // Setup for Heroku host
-const port = process.env.PORT || 8080;
+const port = process.env.PORT;
 
 // CORS Middleware
 app.use(cors());

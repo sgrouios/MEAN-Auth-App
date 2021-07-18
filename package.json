@@ -10,6 +10,7 @@
   "dependencies": {
     "bcryptjs": "*",
     "cors": "*",
+    "dotenv": "^10.0.0",
     "express": "*",
     "jsonwebtoken": "*",
     "mongoose": "*",

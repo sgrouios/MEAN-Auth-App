@@ -1,12 +1,13 @@
+const path = require('path');
+require('dotenv').config({path: path.resolve(__dirname, '../.env')});
 const JwtStrategy = require("passport-jwt").Strategy;
 const ExtractJwt = require("passport-jwt").ExtractJwt;
 const User = require("../models/user");
-const config = require("../config/database");
 
 module.exports = (passport) => {
   passport.use(new JwtStrategy({
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: config.accessSecret
+    secretOrKey: process.env.ACCESS_SECRET
   }, (jwt_payload, done) => {
       User.getUserById(jwt_payload.sub, (err, user) => {
         if (err) {
