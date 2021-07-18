@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, UrlTree } from '@angular/router';
+import { CanActivate, Router, UrlTree } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { TokenService } from '../services/token.service';
@@ -9,13 +9,17 @@ import { TokenService } from '../services/token.service';
 })
 export class UnAuthGuard implements CanActivate {
   
-  constructor(private tokenService: TokenService){}
+  constructor(private tokenService: TokenService,
+              private router: Router){}
 
-  canActivate(): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+  canActivate(): Observable<boolean | UrlTree> {
     return this.tokenService.isLoggedIn()
     .pipe(
-      map((bool) => {
-        return !bool
+      map((canRoute) => {
+        if(!canRoute){
+          return true;
+        }
+        return this.router.parseUrl('');
       })
     );
   }
