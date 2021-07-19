@@ -1,3 +1,9 @@
 .active-link {
     text-decoration: underline;
 }
+
+@media only screen and (max-width: 767px) {
+    .navbar-expand .navbar-nav {
+      flex-direction: column;
+    }
+  }

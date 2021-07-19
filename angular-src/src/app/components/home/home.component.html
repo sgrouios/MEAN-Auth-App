@@ -1,34 +1,48 @@
-<div class="p-5 my-4 card-bg rounded-3 text-center">
+<div class="py-5 my-4 card-bg rounded-3 text-center">
   <div class="container-fluid py-5">
     <h1 class="display-5 fw-bold">MEAN Authentication App</h1>
     <p class="fs-4">
-        Welcome to our custom MEAN authentication application built from scratch
+        Welcome to my custom MEAN authentication application built from scratch
     </p>
     <a class="btn btn-info mx-1" [routerLink]="['/register']">Register</a>
     <a class="btn btn-dark" [routerLink]="['/login']">Login</a>
   </div>
 </div>
 
-<div class="row">
-  <div class="col">
-    <h3>Express Backend</h3>
+<div class="row pt-5 pb-5 text-center">
+  <div class="col mx-5">
+    <h3>Express.js Backend</h3>
     <p>
-      A rock solid Node.js/Express server using Mongoose to organise models and
+      A rock solid Node.js/Express.js server using Mongoose database <br>to organise models and
       query the database
     </p>
   </div>
-  <div class="col">
-    <h3>Angular-CLI</h3>
+  <div class="col mx-5">
+    <h3>Angular 11</h3>
     <p>
-      Angular-CLI to generate components, services and more. Local dev server
-      and easy compilation
+      Angular 11 framework to develop the front-end, using components, services, and guards - to name a few.
     </p>
   </div>
-  <div class="col">
+  <div class="col mx-5">
     <h3>JWT Tokens</h3>
     <p>
-      Full featured authentication using JSON web tokens. Login and store user
+      Full featured authentication using JSON web tokens. <br>Login and store user
       data
     </p>
   </div>
 </div>
+<div class="row text-center">
+  <div class="col mx-5">
+    <h3>JWT silent refresh</h3>
+    <p>
+      Http interceptor configured to automatically generate <br>a new access token for the user when it expires. <br>No need for the user to login frequently.
+    </p>
+  </div>
+  <div class="col mx-5">
+    <h3>Protected routes</h3>
+    <p>
+      Angular CanActivate guards implemented to <br>protect unauthenticated users from routes.
+    </p>
+  </div>
+</div>
+
