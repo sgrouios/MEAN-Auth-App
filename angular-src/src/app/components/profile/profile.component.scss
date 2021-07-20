@@ -5,35 +5,31 @@
     padding: 6vh 0;
 }
 
-.user-profile {
-    width: 30%;
-    height: 55vh;
+.container {
     border: 2px solid black;
     border-radius: 25px;
-    margin: auto;
-    padding-top: 20px;
+    max-width: 35%;
+    margin: 5vh auto;
+    padding: 2%;
+    max-height: 75vh;
 }
 
 img {
     display: block;
     height: auto;
-    width: 15%;
-    height: 15%;
+    max-width: 15%;
+    max-height: 15%;
     margin: auto;
     border-radius: 80%;
 }
 
-.user-profile-content {
-    padding: 0 10px;
-}
-
 .profile-info {
     display: block;
-    min-height: 12vh;
-    max-height: 25vh;
-    width: 80%;
+    min-height: 20vh;
+    max-height: 20vh;
     margin: auto;
-    overflow: auto;
+    text-align: center;
+    min-width: 80%;
 }
 
 .profile-info:disabled {
@@ -41,12 +37,8 @@ img {
 }
 
 @media only screen and (max-width: 767px) {
-    .user-profile {
-        width: 85%;
-        height: 85vh;
-    }
-    .profile-info {
-        min-height: 20vh;
-        max-height: 20vh;
+    .container {
+        max-width: 95%;
+        max-height: 80vh;
     }
 }
