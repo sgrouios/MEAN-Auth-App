@@ -1,0 +1,46 @@
+.background {
+    background: rgb(213, 244, 252);
+    height: 100vh;
+    width: 100%;
+    padding: 6vh 0;
+}
+
+.user-profile {
+    width: 40%;
+    height: 85vh;
+    border: 2px solid black;
+    border-radius: 25px;
+    margin: auto;
+    padding-top: 20px;
+}
+
+img {
+    display: block;
+    height: auto;
+    width: 40%;
+    margin: auto;
+    border-radius: 80%;
+}
+
+.user-profile-content {
+    padding: 0 10px;
+}
+
+.profile-info {
+    min-height: 20vh;
+    max-height: 30vh;
+}
+
+.profile-info:disabled {
+    background-color: white;
+}
+
+@media only screen and (max-width: 767px) {
+    .user-profile {
+        width: 85%;
+        height: 85vh;
+    }
+    .profile-info {
+        max-height: 20vh;
+    }
+}

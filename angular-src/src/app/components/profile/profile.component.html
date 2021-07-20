@@ -1,7 +1,26 @@
-<div *ngIf="userProfile$ | async as user">
-    <h2 class="page-header">{{user.name}}</h2>
-    <ul class="list-group">
-        <li class="list-group-item">Username: {{user.username}}</li>
-        <li class="list-group-item">Email: {{user.email}}</li>
-    </ul>
-</div>
+<div class="background">
+     <div class="user-profile">
+         <div class="user-profile-content">
+            <div *ngIf="userProfile$ | async as user">
+                <img src="../../../assets/user-avatar.png" class= "img-fluid" alt="Avatar">
+                <h2 class="page-header text-center">{{user.name}}</h2>
+                <ul class="list-group">
+                    <li class="list-group-item">Username: {{user.username}}</li>
+                    <li class="list-group-item">Email: {{user.email}}</li>
+                </ul>
+                <div>
+                    <h3 class="page-header text-center mt-3">Profile Information</h3>
+                    <form [formGroup]="form">
+                        <div *ngIf="this.form.controls.profileInformation.disabled" class="profile-info">Here is where the profile info would be</div>
+                        <input *ngIf="!this.form.controls.profileInformation.disabled" type="text" class="form-control profile-info" placeholder="Write something about yourself" formControlName="profileInformation">
+                        <div class="pt-2">
+                            <button type="button" *ngIf="!this.form.controls.profileInformation.disabled" class="btn btn-primary btn-sm float-end" (click)="onProfileSubmit()">Submit</button>
+                            <button type="button" *ngIf="this.form.controls.profileInformation.disabled" class="btn btn-primary btn-sm me-2 float-end" (click)="editProfile()">Edit</button>
+                            <button type="button" *ngIf="!this.form.controls.profileInformation.disabled" class="btn btn-primary btn-sm me-2 float-end" (click)="editProfile()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+         </div>
+     </div>
+ </div>
