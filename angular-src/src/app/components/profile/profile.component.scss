@@ -6,8 +6,8 @@
 }
 
 .user-profile {
-    width: 40%;
-    height: 85vh;
+    width: 30%;
+    height: 55vh;
     border: 2px solid black;
     border-radius: 25px;
     margin: auto;
@@ -17,7 +17,8 @@
 img {
     display: block;
     height: auto;
-    width: 40%;
+    width: 15%;
+    height: 15%;
     margin: auto;
     border-radius: 80%;
 }
@@ -27,8 +28,12 @@ img {
 }
 
 .profile-info {
-    min-height: 20vh;
-    max-height: 30vh;
+    display: block;
+    min-height: 12vh;
+    max-height: 25vh;
+    width: 80%;
+    margin: auto;
+    overflow: auto;
 }
 
 .profile-info:disabled {
@@ -41,6 +46,7 @@ img {
         height: 85vh;
     }
     .profile-info {
+        min-height: 20vh;
         max-height: 20vh;
     }
 }

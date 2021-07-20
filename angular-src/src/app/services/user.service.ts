@@ -30,4 +30,11 @@ export class UserService {
       catchError((err) => throwError(err))
     );
   }
+
+  editProfile(profileInformation: string): Observable<string> {
+    return this.http.post<string>(`${this.apiUrl}/edit-profile`, { profileInformation: profileInformation })
+    .pipe(
+      catchError((err) => throwError(err))
+    );
+  }
 }

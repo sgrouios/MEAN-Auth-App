@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { NotifierService } from 'angular-notifier';
-import { EMPTY, ReplaySubject, Subject } from 'rxjs';
-import { catchError, take, tap } from 'rxjs/operators';
+import { EMPTY, Observable, ReplaySubject, Subject } from 'rxjs';
+import { catchError, concatMap, take, tap } from 'rxjs/operators';
 import { UserProfile } from 'src/app/models/user-profile';
 import { AuthService } from 'src/app/services/auth.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-profile',
@@ -16,43 +17,62 @@ export class ProfileComponent implements OnInit {
 
   private readonly userProfileSubject$ = new ReplaySubject<UserProfile>(1);
   userProfile$ = this.userProfileSubject$.asObservable();
-  form: FormGroup = new FormGroup({profileInformation: new FormControl({ value: '', disabled: true}, Validators.required)});
+  enableEdit = false;
+  profileInformation!: string;
 
-  constructor(private authService: AuthService, private notifier: NotifierService) { }
+  constructor(private authService: AuthService,
+              private userService: UserService, 
+              private notifier: NotifierService) { }
 
   ngOnInit(): void {
-    this.authService.getProfile()
+    this.getProfileData().subscribe();
+  }
+  
+  getProfileData(): Observable<UserProfile> {
+    return this.authService.getProfile()
     .pipe(
       tap((user: UserProfile) => this.updateProfile(user)),
       catchError(() => {
         this.notifier.notify('error', 'Could not get profile data');
         return EMPTY;
       })
-    ).subscribe();
+    );
   }
-  
+
   editProfile(): void {
-      this.form.controls.profileInformation.enable();
+    this.changeProfileEditable(true);
   }
 
   cancelProfile(): void {
-    // get last user value from ReplaySubject
-    this.userProfile$.pipe(
+    this.userProfile$
+    .pipe(
       take(1),
-      tap((user) => { 
-        // assign retrieved value back to formcontrol
-        this.form.controls.profileInformation.setValue(user.profileInformation); 
-      })
+      tap((user) => this.profileInformation = user.profileInformation)
     ).subscribe();
-    this.form.controls.profileInformation.disable();
+    this.changeProfileEditable(false);
   }
 
   onProfileSubmit(): void {
-    console.log(this.form.value);
+    this.userService.editProfile(this.profileInformation)
+    .pipe(
+      catchError((err) => {
+        this.notifier.notify('error', 'Profile could not be updated');
+        return EMPTY;
+      }),
+      concatMap(() => this.getProfileData()),      
+      tap(() => { 
+        this.notifier.notify('success', 'User profile updated');
+        this.changeProfileEditable(false);
+      })
+    ).subscribe();
   }
 
   updateProfile(user: UserProfile): void {
+    this.profileInformation = user.profileInformation;
     this.userProfileSubject$.next(user);
-    this.form.controls.profileInformation.setValue(user.profileInformation);
+  }
+
+  changeProfileEditable(bool: boolean): void {
+    this.enableEdit = bool;
   }
 }
