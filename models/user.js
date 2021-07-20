@@ -17,6 +17,9 @@ const UserSchema = mongoose.Schema({
     password: {
         type: String, 
         required: true
+    },
+    profileInformation: {
+        type: String
     }
 });
 
@@ -58,4 +61,9 @@ module.exports.getUserByUsername = (username, callback) => {
 module.exports.getUserByEmail = (email, callback) => {
     const query = { email: email };
     User.findOne(query, callback);
+}
+
+module.exports.addProfileInformation = (user, profileInfo, callback) => {
+    user.profileInformation = profileInfo;
+    user.save(callback);
 }

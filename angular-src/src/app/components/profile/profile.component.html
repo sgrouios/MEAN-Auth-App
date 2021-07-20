@@ -11,12 +11,12 @@
                 <div>
                     <h3 class="page-header text-center mt-3">Profile Information</h3>
                     <form [formGroup]="form">
-                        <div *ngIf="this.form.controls.profileInformation.disabled" class="profile-info">Here is where the profile info would be</div>
-                        <input *ngIf="!this.form.controls.profileInformation.disabled" type="text" class="form-control profile-info" placeholder="Write something about yourself" formControlName="profileInformation">
+                        <div *ngIf="this.form.controls.profileInformation.disabled" class="profile-info">{{user.profileInformation}}</div>
+                        <input id="profileInfo" *ngIf="!this.form.controls.profileInformation.disabled" type="text" class="form-control profile-info" placeholder="Write something about yourself" formControlName="profileInformation">
                         <div class="pt-2">
                             <button type="button" *ngIf="!this.form.controls.profileInformation.disabled" class="btn btn-primary btn-sm float-end" (click)="onProfileSubmit()">Submit</button>
                             <button type="button" *ngIf="this.form.controls.profileInformation.disabled" class="btn btn-primary btn-sm me-2 float-end" (click)="editProfile()">Edit</button>
-                            <button type="button" *ngIf="!this.form.controls.profileInformation.disabled" class="btn btn-primary btn-sm me-2 float-end" (click)="editProfile()">Cancel</button>
+                            <button type="button" *ngIf="!this.form.controls.profileInformation.disabled" class="btn btn-primary btn-sm me-2 float-end" (click)="cancelProfile()">Cancel</button>
                         </div>
                     </form>
                 </div>

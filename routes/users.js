@@ -76,7 +76,8 @@ router.get(
   "/profile",
   passport.authenticate("jwt", { session: false }),
   (req, res, next) => {
-    res.json({ id: req.user._id, name: req.user.name, email: req.user.email, username: req.user.username });
+    console.log(req);
+    res.json({ id: req.user._id, name: req.user.name, email: req.user.email, username: req.user.username, profileInformation: req.user.profileInformation });
   }
 );
 
@@ -150,6 +151,19 @@ router.get('/logout', (req, res, next) => {
     if(refreshToken.deletedCount > 0) return res.status(200).json('User successfully logged out');
     else
       return res.status(200).json('No refresh token found');
+  })
+})
+
+router.post('/edit-profile', 
+passport.authenticate("jwt", { session: false }),
+(req, res) => {
+  User.addProfileInformation(req.user, req.body.profileInformation, (err, profile) => {
+    if(err)
+      return res.status(500).status('Something went wrong adding profile information');
+    if(!profile)
+      return res.status(500).json('User could not be found');
+    else
+      return res.status(200).json('Profile information updated');
   })
 })
 module.exports = router;
