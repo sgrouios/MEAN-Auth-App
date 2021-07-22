@@ -13,8 +13,6 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TokenInterceptor } from './interceptors/token-interceptor';
 import { NotifierModule } from 'angular-notifier';
-import { FaIconLibrary, FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faCamera } from '@fortawesome/free-solid-svg-icons';
 
 @NgModule({
   declarations: [
@@ -32,8 +30,7 @@ import { faCamera } from '@fortawesome/free-solid-svg-icons';
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
-    NotifierModule,
-    FontAwesomeModule
+    NotifierModule
   ],
   providers: [ 
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true}
@@ -41,7 +38,4 @@ import { faCamera } from '@fortawesome/free-solid-svg-icons';
   bootstrap: [AppComponent]
 })
 export class AppModule { 
-  constructor(library: FaIconLibrary){
-    library.addIcons(faCamera);
-  }
 }
