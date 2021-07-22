@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { NotifierService } from 'angular-notifier';
-import { EMPTY, Observable, ReplaySubject } from 'rxjs';
+import { EMPTY, fromEvent, Observable, ReplaySubject } from 'rxjs';
 import { catchError, concatMap, finalize, take, tap } from 'rxjs/operators';
 import { Loading } from 'src/app/base/loading/loading';
 import { UserProfile } from 'src/app/models/user-profile';
@@ -27,6 +27,7 @@ export class ProfileComponent extends Loading implements OnInit {
               }
 
   ngOnInit(): void {
+
     this.getProfileData().subscribe();
   }
   
@@ -78,5 +79,17 @@ export class ProfileComponent extends Loading implements OnInit {
 
   changeProfileEditable(bool: boolean): void {
     this.enableEdit = bool;
+  }
+
+  profileUpload(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    const file = target.files?.item(0) as File;
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      const profileImage = reader.result?.toString();
+      console.log(`profile image reader: ${profileImage}`);
+      // store profileImage in database
+    }
   }
 }
