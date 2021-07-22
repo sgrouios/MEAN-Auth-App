@@ -60,7 +60,7 @@ export class AuthService {
   registerUser(user: User): Observable<string> {
     return this.http
       .post<string>(
-        `users/register`,
+        `${this.apiUrl}/register`,
         user,
         ExclusionHeader.addExclusionHeader()
       )

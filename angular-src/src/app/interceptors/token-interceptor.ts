@@ -6,7 +6,7 @@ import {
   HttpRequest,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { EMPTY, Observable } from 'rxjs';
+import { EMPTY, Observable, throwError } from 'rxjs';
 import { catchError, concatMap, mergeMap, tap } from 'rxjs/operators';
 import { TokenService } from '../services/token.service';
 
@@ -41,12 +41,12 @@ export class TokenInterceptor implements HttpInterceptor {
                   return this.tokenService.errorHandler(new Error('Unauthorized user'));
                 }
               }
-              return;
+              return throwError(err);
             }
           )
         );
       }),
-      catchError(() => EMPTY)
+      catchError((err) => throwError(err))
     )
   }
 }

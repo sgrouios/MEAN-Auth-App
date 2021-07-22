@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { NotifierService } from 'angular-notifier';
-import { EMPTY, Observable, ReplaySubject, Subject } from 'rxjs';
-import { catchError, concatMap, take, tap } from 'rxjs/operators';
+import { EMPTY, Observable, ReplaySubject } from 'rxjs';
+import { catchError, concatMap, finalize, take, tap } from 'rxjs/operators';
+import { Loading } from 'src/app/base/loading/loading';
 import { UserProfile } from 'src/app/models/user-profile';
 import { AuthService } from 'src/app/services/auth.service';
 import { UserService } from 'src/app/services/user.service';
@@ -13,7 +13,7 @@ import { UserService } from 'src/app/services/user.service';
   styleUrls: ['./profile.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ProfileComponent implements OnInit {
+export class ProfileComponent extends Loading implements OnInit {
 
   private readonly userProfileSubject$ = new ReplaySubject<UserProfile>(1);
   userProfile$ = this.userProfileSubject$.asObservable();
@@ -22,7 +22,9 @@ export class ProfileComponent implements OnInit {
 
   constructor(private authService: AuthService,
               private userService: UserService, 
-              private notifier: NotifierService) { }
+              private notifier: NotifierService) { 
+                super();
+              }
 
   ngOnInit(): void {
     this.getProfileData().subscribe();
@@ -53,6 +55,7 @@ export class ProfileComponent implements OnInit {
   }
 
   onProfileSubmit(): void {
+    this.isLoadingSubject$.next(true);
     this.userService.editProfile(this.profileInformation)
     .pipe(
       catchError((err) => {
@@ -63,7 +66,8 @@ export class ProfileComponent implements OnInit {
       tap(() => { 
         this.notifier.notify('success', 'User profile updated');
         this.changeProfileEditable(false);
-      })
+      }),
+      finalize(() => this.isLoadingSubject$.next(false))
     ).subscribe();
   }
 

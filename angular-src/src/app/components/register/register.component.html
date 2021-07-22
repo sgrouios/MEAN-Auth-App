@@ -1,4 +1,4 @@
-<div class="container-fluid mt-5">
+<div class="container-fluid form-width mt-5">
   <h2 class="page-header">Register</h2>
   <form [formGroup]="form">
     <div class="mb-3">
@@ -14,7 +14,7 @@
     </div>
     <div class="mb-3">
         <label for="username" class="form-label">Username</label>
-        <span *ngIf="this.form.controls.username.status === 'PENDING'" class='spinner-border spinner-border-sm text-primary pull-right'></span>
+        <span *ngIf="this.form.controls.username.status === 'PENDING'" class='spinner-border spinner-border-sm text-primary float-end'></span>
         <input
           type="text"
           class="form-control border border-secondary"
@@ -27,7 +27,7 @@
     </div>
     <div class="mb-3">
       <label for="email" class="form-label">Email address</label>
-      <span *ngIf="this.form.controls.email.status === 'PENDING'" class='spinner-border spinner-border-sm text-primary pull-right'></span>
+      <span *ngIf="this.form.controls.email.status === 'PENDING'" class='spinner-border spinner-border-sm text-primary float-end'></span>
       <input
         type="email"
         class="form-control border border-secondary"
@@ -49,6 +49,9 @@
       />
       <p *ngIf="form.controls.password.touched && !form.controls.password.valid" class="text-danger">Please enter a password</p>
     </div>
-    <button type="submit" class="btn btn-primary" [disabled]="!this.form.valid" (click)="onRegisterSubmit()">Submit</button>
+    <button type="submit" class="btn btn-primary" [disabled]="!this.form.valid || (isLoading$ | async)" (click)="onRegisterSubmit()">
+      <span [ngClass]="{'spinner-border spinner-border-sm': isLoading$ | async}" role="status" aria-hidden="true"></span>
+      Submit
+    </button>
 </form>
 </div>

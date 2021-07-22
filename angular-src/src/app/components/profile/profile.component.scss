@@ -8,17 +8,15 @@
 .container {
     border: 2px solid black;
     border-radius: 25px;
-    max-width: 35%;
-    margin: 5vh auto;
-    padding: 2%;
-    max-height: 75vh;
+    max-width: 800px;
+    margin: auto;
+    max-height: 700px;
 }
 
 img {
     display: block;
-    height: auto;
-    max-width: 15%;
-    max-height: 15%;
+    max-width: 100px;
+    max-height: 100px;
     margin: auto;
     border-radius: 80%;
 }
@@ -34,11 +32,4 @@ img {
 
 .profile-info:disabled {
     background-color: white;
-}
-
-@media only screen and (max-width: 767px) {
-    .container {
-        max-width: 95%;
-        max-height: 80vh;
-    }
 }

@@ -4,4 +4,10 @@
 @import '~bootswatch/dist/lux/bootswatch';
 @import '~angular-notifier/styles';
 
+.form-width {
+    max-width: 1000px;
+}
 
+.spinner-border {
+    pointer-events: none;
+}

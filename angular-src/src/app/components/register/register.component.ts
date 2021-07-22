@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NotifierService } from 'angular-notifier';
 import { EMPTY } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { catchError, finalize, tap } from 'rxjs/operators';
+import { Loading } from 'src/app/base/loading/loading';
 import { User } from 'src/app/models/user';
 import { AuthService } from 'src/app/services/auth.service';
 import { UserService } from 'src/app/services/user.service';
@@ -15,14 +16,16 @@ import { CheckUsernameValidator } from 'src/app/validators/username-validator';
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
-export class RegisterComponent {
+export class RegisterComponent extends Loading {
 
   form: FormGroup = this.initForm();
 
   constructor(private userService: UserService,
               private notifier: NotifierService,
               private authService: AuthService,
-              private router: Router) {}
+              private router: Router) {
+                super();
+              }
 
   initForm(): FormGroup {
     return new FormGroup({
@@ -40,6 +43,7 @@ export class RegisterComponent {
 
   onRegisterSubmit() : void {
     if(this.form.valid){
+      this.isLoadingSubject$.next(true);
       const user = <User>this.form.value;
       this.authService.registerUser(user)
       .pipe(
@@ -50,7 +54,8 @@ export class RegisterComponent {
         tap(() => { 
           this.notifier.notify('success', 'User successfully registered');
           this.router.navigate(['login']);
-        })
+        }),
+        finalize(() => this.isLoadingSubject$.next(false))
       ).subscribe();
     }
   }

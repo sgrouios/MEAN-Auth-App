@@ -3,7 +3,8 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NotifierService } from 'angular-notifier';
 import { EMPTY } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { catchError, finalize, tap } from 'rxjs/operators';
+import { Loading } from 'src/app/base/loading/loading';
 import { AuthenticateUser } from 'src/app/models/authenticate-user';
 import { AuthService } from 'src/app/services/auth.service';
 import { TokenService } from 'src/app/services/token.service';
@@ -13,14 +14,17 @@ import { TokenService } from 'src/app/services/token.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent {
-
+export class LoginComponent extends Loading {
+  
+  form = this.initForm();
+  
   constructor(private authService: AuthService,
               private router: Router,
               private notifier: NotifierService,
-              private tokenService: TokenService){}
+              private tokenService: TokenService){
+                super();
+              }
 
-  form = this.initForm();
 
   initForm(): FormGroup {
     return new FormGroup({
@@ -31,6 +35,7 @@ export class LoginComponent {
 
   onLoginSubmit(): void {
     if(this.form.valid){
+      this.isLoadingSubject$.next(true);
       this.authService.authenticateUser(<AuthenticateUser>this.form.value)
       .pipe(
         tap(() => { 
@@ -42,7 +47,8 @@ export class LoginComponent {
         { 
           this.notifier.notify('error', 'User could not be authenticated');
           return EMPTY; 
-        })
+        }),
+        finalize(() => this.isLoadingSubject$.next(false))
       ).subscribe();
     }
   }

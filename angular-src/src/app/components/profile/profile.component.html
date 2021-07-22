@@ -1,38 +1,46 @@
- <div class="container background">
-     <div *ngIf="userProfile$ | async as user">
-        <div class="row">
-            <img src="../../../assets/user-avatar.png" class= "img-fluid" alt="Avatar">
-        </div>
-        <div class="row">
-            <div class="col">
-                <h2 class="page-header text-center mt-4">{{user.name}}</h2>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <h5 class="text-center mt-5">Username: {{user.username}}</h5>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <h5 class="text-center">Email: {{user.email}}</h5>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <h3 class="page-header text-center mt-5">Profile Information</h3>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <textarea [(ngModel)]="profileInformation" *ngIf="enableEdit" class="profile-info text-center" maxlength="400">{{user.profileInformation}}</textarea>
-                <div *ngIf="!enableEdit" class="profile-info text-center">{{user.profileInformation}}</div>            </div>
-        </div>
-        <div class="row mt-3">
-            <div class="col">
-                <button type="button" *ngIf="enableEdit" class="btn btn-primary btn-sm float-end" (click)="onProfileSubmit()">Submit</button>
-                <button type="button" *ngIf="!enableEdit" class="btn btn-primary btn-sm me-2 float-end" (click)="editProfile()">Edit</button>
-                <button type="button" *ngIf="enableEdit" class="btn btn-primary btn-sm me-2 float-end" (click)="cancelProfile()">Cancel</button>            </div>
-        </div>
-     </div>
+ <div class="p-2">
+    <div class="container background px-2">
+    <div *ngIf="userProfile$ | async as user">
+       <div class="row">
+           <img src="../../../assets/user-avatar.png" class= "img-fluid" alt="Avatar">
+       </div>
+       <div class="row">
+           <div class="col">
+               <h2 class="page-header text-center mt-4">{{user.name}}</h2>
+           </div>
+       </div>
+       <div class="row">
+           <div class="col">
+               <h5 class="text-center mt-5">Username: {{user.username}}</h5>
+           </div>
+       </div>
+       <div class="row">
+           <div class="col">
+               <h5 class="text-center">Email: {{user.email}}</h5>
+           </div>
+       </div>
+       <div class="row">
+           <div class="col">
+               <h3 class="page-header text-center mt-5">Profile Information</h3>
+           </div>
+       </div>
+       <div class="row">
+           <div class="col">
+               <textarea [(ngModel)]="profileInformation" *ngIf="enableEdit" class="profile-info text-center" maxlength="400" placeholder="Write something about yourself...">{{user.profileInformation}}</textarea>
+               <div *ngIf="!enableEdit" class="profile-info text-center">{{user.profileInformation}}</div>            
+           </div>
+       </div>
+       <div class="row mt-3">
+           <div class="col">
+               <button type="button" *ngIf="enableEdit" class="btn btn-primary btn-sm float-end" (click)="onProfileSubmit()" [disabled]="isLoading$ | async">
+                <span [ngClass]="{'spinner-border spinner-border-sm': isLoading$ | async}" role="status" aria-hidden="true"></span>
+                   Submit
+                </button>
+               <button type="button" *ngIf="!enableEdit" class="btn btn-primary btn-sm me-2 float-end" (click)="editProfile()">Edit</button>
+               <button type="button" *ngIf="enableEdit" class="btn btn-primary btn-sm me-2 float-end" (click)="cancelProfile()">Cancel</button>            
+           </div>
+       </div>
+    </div>
+</div>
+
  </div>
