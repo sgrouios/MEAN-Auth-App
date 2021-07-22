@@ -1,6 +1,5 @@
  <div class="p-2">
-    <div class="container background px-2">
-    <div *ngIf="userProfile$ | async as user">
+    <div *ngIf="userProfile$ | async as user" class="container background px-2">
        <div class="row">
            <img src="../../../assets/user-avatar.png" class= "img-fluid" alt="Avatar">
        </div>
@@ -40,7 +39,6 @@
                <button type="button" *ngIf="enableEdit" class="btn btn-primary btn-sm me-2 float-end" (click)="cancelProfile()">Cancel</button>            
            </div>
        </div>
-    </div>
 </div>
 
  </div>
