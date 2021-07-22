@@ -20,6 +20,9 @@ const UserSchema = mongoose.Schema({
     },
     profileInformation: {
         type: String
+    },
+    profilePicture: {
+        type: String
     }
 });
 

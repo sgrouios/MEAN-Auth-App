@@ -76,7 +76,15 @@ router.get(
   "/profile",
   passport.authenticate("jwt", { session: false }),
   (req, res, next) => {
-    res.json({ id: req.user._id, name: req.user.name, email: req.user.email, username: req.user.username, profileInformation: req.user.profileInformation });
+    res.json(
+      { 
+        id: req.user._id, 
+        name: req.user.name, 
+        email: req.user.email, 
+        username: req.user.username, 
+        profileInformation: req.user.profileInformation, 
+        profilePicture: req.user.profilePicture 
+    });
   }
 );
 

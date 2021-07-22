@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { NotifierService } from 'angular-notifier';
-import { EMPTY, fromEvent, Observable, ReplaySubject } from 'rxjs';
+import { EMPTY, Observable, ReplaySubject } from 'rxjs';
 import { catchError, concatMap, finalize, take, tap } from 'rxjs/operators';
 import { Loading } from 'src/app/base/loading/loading';
 import { UserProfile } from 'src/app/models/user-profile';
@@ -27,7 +27,6 @@ export class ProfileComponent extends Loading implements OnInit {
               }
 
   ngOnInit(): void {
-
     this.getProfileData().subscribe();
   }
   
