@@ -82,8 +82,7 @@ router.get(
         name: req.user.name, 
         email: req.user.email, 
         username: req.user.username, 
-        profileInformation: req.user.profileInformation, 
-        profilePicture: req.user.profilePicture 
+        profileInformation: req.user.profileInformation
     });
   }
 );
@@ -164,7 +163,7 @@ router.get('/logout', (req, res, next) => {
 router.post('/edit-profile', 
 passport.authenticate("jwt", { session: false }),
 (req, res) => {
-  User.addProfileInformation(req.user, req.body.profileInformation, (err, profile) => {
+  User.updateProfileInformation(req.user, req.body.profileInformation, (err, profile) => {
     if(err)
       return res.status(500).status('Something went wrong adding profile information');
     if(!profile)
@@ -173,4 +172,19 @@ passport.authenticate("jwt", { session: false }),
       return res.status(200).json('Profile information updated');
   })
 })
+
+  router.post('/update-profile-image', 
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    /* Use Amazon S3 to store url instead */
+    User.updateUserImage(req.user, req.body.imageUrl, (err, user) => {
+      if(err) 
+        return res.status(422).json('Could not update user image');
+      if(!user)
+        return res.status(500).json('User could not be found');
+      else
+        return res.status(200).json('User profile image updated');
+    })
+  });
+
 module.exports = router;

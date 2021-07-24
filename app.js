@@ -32,7 +32,7 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Express JSON Body-parser Middleware
-app.use(express.json());
+app.use(express.json({ limit: '2mb', extended: true}));
 
 // Passport Middleware
 app.use(passport.initialize());

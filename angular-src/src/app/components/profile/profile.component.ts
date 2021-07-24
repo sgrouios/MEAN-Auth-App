@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { NotifierService } from 'angular-notifier';
 import { EMPTY, Observable, ReplaySubject } from 'rxjs';
@@ -86,9 +87,22 @@ export class ProfileComponent extends Loading implements OnInit {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => {
-      const profileImage = reader.result?.toString();
-      console.log(`profile image reader: ${profileImage}`);
-      // store profileImage in database
+      const profileImage = reader.result?.toString() as string;
+      console.log(profileImage);
+/*       this.userService.updateProfileImage(profileImage)
+      .pipe(
+        catchError((err: HttpErrorResponse) => {
+          if(err.status === 413){
+            this.notifier.notify('error', `Image size too large`);
+          }
+          else
+            this.notifier.notify('error', `Could not update user's profile image`);
+          return EMPTY;
+        }),
+        tap(() => {
+          this.notifier.notify('success', 'Updated user profile image');
+        })
+      ).subscribe(); */
     }
   }
 }

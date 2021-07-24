@@ -20,10 +20,11 @@ const UserSchema = mongoose.Schema({
     },
     profileInformation: {
         type: String
-    },
-    profilePicture: {
-        type: String
-    }
+    }/*,
+    profileImage: {
+        data: Buffer,
+        contentType: String
+    }*/
 });
 
 const User = module.exports = mongoose.model('User', UserSchema);
@@ -66,7 +67,12 @@ module.exports.getUserByEmail = (email, callback) => {
     User.findOne(query, callback);
 }
 
-module.exports.addProfileInformation = (user, profileInfo, callback) => {
+module.exports.updateProfileInformation = (user, profileInfo, callback) => {
     user.profileInformation = profileInfo;
     user.save(callback);
+}
+
+module.exports.updateUserImage = (user, imageUrl, callback) => {
+    /* user.profileImage = imageUrl;
+    user.save(callback); */
 }

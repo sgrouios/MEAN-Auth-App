@@ -37,4 +37,11 @@ export class UserService {
       catchError((err) => throwError(err))
     );
   }
+
+  updateProfileImage(imageUrl: string): Observable<string> {
+    return this.http.post<string>(`${this.apiUrl}/update-profile-image`, { imageUrl: imageUrl })
+    .pipe(
+      catchError((err) => throwError(err))
+    );
+  }
 }

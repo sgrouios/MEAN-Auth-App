@@ -2,7 +2,7 @@
     <div *ngIf="userProfile$ | async as user" class="container background px-2">
        <div class="row">
            <div class="profile-pic">
-               <img [src]="'../../../assets/user-avatar.png'"
+               <img [src]="user.profileImage ?? '../../../assets/user-avatar.png'"
                class="img-fluid" 
                alt="avatar">
                <input type="file" id="imageUpload" accept="image/x-png,image/jpeg" 
