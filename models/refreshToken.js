@@ -14,23 +14,24 @@ const RefreshTokenSchema = mongoose.Schema({
 
 const RefreshToken = module.exports = mongoose.model('RefreshToken', RefreshTokenSchema);
 
-module.exports.getRefreshTokenByUserId = (userId, callback) => {
+module.exports.getRefreshTokenByUserId = (userId) => {
     const query = { userId: userId };
-    RefreshToken.findOne(query, callback);
+    return RefreshToken.findOne(query).exec();
 }
 
-module.exports.addRefreshToken = (refreshToken, callback) => {
-    module.exports.getRefreshTokenByUserId(refreshToken.userId, (err, existingRefreshToken) => {
-        if(err) throw err;
-        if(existingRefreshToken){
-            existingRefreshToken.token = refreshToken.token;
-            existingRefreshToken.save(callback);
+module.exports.addRefreshToken = (refreshToken) => {
+    return module.exports.getRefreshTokenByUserId(refreshToken.userId)
+    .then((existingToken) => {
+        if(existingToken){
+            existingToken.token = refreshToken.token;
+            return existingToken.save();
         }
         else
-            refreshToken.save(callback);
-    });
+            return existingToken.save();
+    })
+    .catch(() => { throw err });
 }
 
-module.exports.removeRefreshToken = (refreshToken, callback) => {
-    RefreshToken.deleteOne({ token: refreshToken }, callback);
+module.exports.removeRefreshToken = (refreshToken) => {
+    return RefreshToken.deleteOne({ token: refreshToken }).exec();
 }

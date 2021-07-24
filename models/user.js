@@ -29,16 +29,16 @@ const UserSchema = mongoose.Schema({
 
 const User = module.exports = mongoose.model('User', UserSchema);
 
-module.exports.getUserById = (id, callback) => {
+const getUserById = (id, callback) => {
     User.findById(id, callback);
 }
 
-module.exports.getUserByUsername = (username, callback) => {
+const getUserByUsername = (username) => {
     const query = { username: username };
-    User.findOne(query, callback);
+    return User.findOne(query).exec();
 }
 
-module.exports.addUser = (newUser, callback) => {
+const addUser = (newUser, callback) => {
     bcrypt.genSalt(10, (err, salt) => {
         bcrypt.hash(newUser.password, salt, (err, hash) => {
             if(err)
@@ -49,30 +49,28 @@ module.exports.addUser = (newUser, callback) => {
     })
 }
 
-module.exports.comparePassword = (candidatePassword, hash, callback) => {
-    bcrypt.compare(candidatePassword, hash, (err, isMatch) => {
+const comparePassword = (candidatePassword, hash, callback) => {
+    /* bcrypt.compare(candidatePassword, hash, (err, isMatch) => {
         if(err) 
             throw err;
         callback(null, isMatch);
-    })
+    }) */
+    return bcrypt.compare(candidatePassword, hash);
 }
 
-module.exports.getUserByUsername = (username, callback) => {
-    const query = { username: username };
-    User.findOne(query, callback);
-}
-
-module.exports.getUserByEmail = (email, callback) => {
+const getUserByEmail = (email) => {
     const query = { email: email };
-    User.findOne(query, callback);
+    return User.findOne(query).exec();
 }
 
-module.exports.updateProfileInformation = (user, profileInfo, callback) => {
+const updateProfileInformation = (user, profileInfo) => {
     user.profileInformation = profileInfo;
-    user.save(callback);
+    return user.save();
 }
 
-module.exports.updateUserImage = (user, imageUrl, callback) => {
+const updateUserImage = (user, imageUrl, callback) => {
     /* user.profileImage = imageUrl;
     user.save(callback); */
 }
+
+module.exports = { getUserById, getUserByUsername, addUser, comparePassword, getUserByEmail, updateProfileInformation, updateUserImage }

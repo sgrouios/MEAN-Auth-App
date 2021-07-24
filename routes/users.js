@@ -6,6 +6,9 @@ const passport = require("passport");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const RefreshToken = require("../models/refreshToken");
+const UserService = require('../services/user-service');
+const RefreshTokenService = require('../services/refresh-token-service');
+const UserRegisterService = require('../services/user-register-service');
 
 // Register
 router.post("/register", (req, res, next) => {
@@ -23,59 +26,60 @@ router.post("/register", (req, res, next) => {
 });
 
 // Authenticate
-router.post("/authenticate", (req, res, next) => {
+router.post("/authenticate", async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
 
-  User.getUserByUsername(username, (err, user) => {
-    if (err) throw err;
-    if (!user) return res.status(401).json('User could not be found');
-
-    User.comparePassword(password, user.password, (err, isMatch) => {
-      if (err) throw err;
-      if (isMatch) {
-        const { password, __v, _id, ...payload } = user._doc;
-        payload["sub"] = user._id;
-        const accessToken = jwt.sign(payload, process.env.ACCESS_SECRET, {
-          expiresIn: 36000, //10 hours
-        });
-        const refreshToken = jwt.sign(payload, process.env.REFRESH_SECRET, {
-          expiresIn: 604800, // 1 week
-        });
-
-        var refreshTokenEntry = new RefreshToken({
-          userId: user._id,
-          token: refreshToken,
-        });
-
-        RefreshToken.addRefreshToken(refreshTokenEntry, (err, token) => {
-          if (err) throw err;
-          if (!token)
-            return res.status(500).json('Error adding refresh token');
-
-          return res.json({
-            accessToken: accessToken,
-            refreshToken: refreshToken,
-            user: {
-              id: user._id,
-              name: user.name,
-              username: user.username,
-              email: user.email,
-            },
-          });
-        });
-      } else {
+  await User.getUserByUsername(username)
+  .then((user) => {
+    if(!user)
+      return res.status(401).json('User could not be found');
+    // compare password
+    User.comparePassword(password, user.password)
+    .then((isMatch) => {
+      if(!isMatch)
         return res.status(401).json('User could not be authenticated');
-      }
-    });
-  });
+      // grant tokens
+      const { password, __v, _id, ...payload } = user._doc;
+      payload["sub"] = user._id;
+      const accessToken = jwt.sign(payload, process.env.ACCESS_SECRET, {
+        expiresIn: 36000, //10 hours
+      });
+      const refreshToken = jwt.sign(payload, process.env.REFRESH_SECRET, {
+        expiresIn: 604800, // 1 week
+      });
+      var refreshTokenEntry = new RefreshToken({
+        userId: user._id,
+        token: refreshToken,
+      });
+
+      RefreshToken.addRefreshToken(refreshTokenEntry)
+      .then((token => {
+        if(!token)
+          return res.status(500).json('Error adding refresh token');
+        return res.json({
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+          user: {
+            id: user._id,
+            name: user.name,
+            username: user.username,
+            email: user.email,
+            },
+          });      
+        }))
+      .catch(() => { throw err })
+    })
+    .catch((err) => { throw err })
+  })
+  .catch(() => res.status(500).json('Something went wrong'));
 });
 
 // Profile
 router.get(
   "/profile",
   passport.authenticate("jwt", { session: false }),
-  (req, res, next) => {
+  (req, res) => {
     res.json(
       { 
         id: req.user._id, 
@@ -88,7 +92,7 @@ router.get(
 );
 
 // Test Refresh
-router.get("/refresh", (req, res, next) => {
+router.get("/refresh", (req, res) => {
   // Verify token
   jwt.verify(req.body.token, process.env.REFRESH_SECRET, (err, decodedPayload) => {
     if (err) throw err;
@@ -135,56 +139,40 @@ router.get("/refresh", (req, res, next) => {
   });
 });
 
-router.get("/check-username", (req, res, next) => {
-  User.getUserByUsername(req.query.username, (err, user) => {
-    if (err) throw err;
-    if (user) return res.json({ doesExist: true });
-    return res.json({ doesExist: false });
-  });
+router.get("/check-username", async (req, res) => {
+  const doesExist = await UserRegisterService.checkUsername(req.query.username);
+  res.json(doesExist);
 });
 
-router.get("/check-email", (req, res, next) => {
-  User.getUserByEmail(req.query.email, (err, user) => {
-    if (err) throw err;
-    if (user) return res.json({ doesExist: true });
-    return res.json({ doesExist: false });
-  });
+router.get("/check-email", async (req, res) => {
+  const doesExist = await UserRegisterService.checkUserEmail(req.query.email);
+  res.json(doesExist);
 });
 
-router.get('/logout', (req, res, next) => {
-  RefreshToken.removeRefreshToken(req.query.refreshToken, (err, refreshToken) => {
-    if(err) throw err;
-    if(refreshToken.deletedCount > 0) return res.status(200).json('User successfully logged out');
-    else
-      return res.status(200).json('No refresh token found');
-  })
+router.get('/logout', async (req, res) => {
+  const { status, msg } = await RefreshTokenService.removeRefreshToken(req.query.refreshToken);
+  res.status(status).json(msg);
 })
 
 router.post('/edit-profile', 
 passport.authenticate("jwt", { session: false }),
-(req, res) => {
-  User.updateProfileInformation(req.user, req.body.profileInformation, (err, profile) => {
-    if(err)
-      return res.status(500).status('Something went wrong adding profile information');
-    if(!profile)
-      return res.status(500).json('User could not be found');
-    else
-      return res.status(200).json('Profile information updated');
-  })
+async (req, res) => {
+  const { status, msg } = await UserService.updateProfileInformation(req.user, req.body.profileInformation, res);
+  res.status(status).json(msg);
 })
 
-  router.post('/update-profile-image', 
-  passport.authenticate("jwt", { session: false }),
-  (req, res) => {
-    /* Use Amazon S3 to store url instead */
-    User.updateUserImage(req.user, req.body.imageUrl, (err, user) => {
-      if(err) 
-        return res.status(422).json('Could not update user image');
-      if(!user)
-        return res.status(500).json('User could not be found');
-      else
-        return res.status(200).json('User profile image updated');
-    })
-  });
+  // router.post('/update-profile-image', 
+  // passport.authenticate("jwt", { session: false }),
+  // (req, res) => {
+  //   /* Use Amazon S3 to store url instead */
+  //   User.updateUserImage(req.user, req.body.imageUrl, (err, user) => {
+  //     if(err) 
+  //       return res.status(422).json('Could not update user image');
+  //     if(!user)
+  //       return res.status(500).json('User could not be found');
+  //     else
+  //       return res.status(200).json('User profile image updated');
+  //   })
+  // });
 
 module.exports = router;
