@@ -6,12 +6,12 @@ const authenticateUser = async (username, password) => {
     return User.getUserByUsername(username)
     .then(user => {
       if(!user)
-        return { status: 401, msg: 'User could not be found'}
+        return { status: 401, body: 'User could not be found'}
         // User found - compare password
         return User.comparePassword(password, user.password)
         .then(isMatch => {
           if(!isMatch)
-            return { status: 401, msg: 'User could not be authenticated'};
+            return { status: 401, body: 'User could not be authenticated'};
           // Password matched
           const { password, __v, _id, ...payload } = user._doc;
           payload["sub"] = user._id; 
@@ -30,18 +30,20 @@ const authenticateUser = async (username, password) => {
           return RefreshToken.addRefreshToken(refreshTokenEntry)
           .then(token => {
             if(!token)
-              return { status: 500, msg: 'Error adding refresh token'};
+              return { status: 500, body: 'Error adding refresh token'};
               // return successful json
               return { 
-                status: 200, 
-                accessToken: accessToken,
-                refreshToken: refreshToken,
-                user: {
-                  id: user._id,
-                  name: user.name,
-                  username: user.username,
-                  email: user.email
-                }
+                status: 200,
+                body: {
+                  accessToken: accessToken,
+                  refreshToken: refreshToken,
+                  user: {
+                    id: user._id,
+                    name: user.name,
+                    username: user.username,
+                    email: user.email
+                  }
+                } 
               }
           })
           .catch(err => { throw err });
@@ -54,11 +56,11 @@ const authenticateUser = async (username, password) => {
 const updateProfileInformation = (user, profileInfo) => {
   return User.updateProfileInformation(user, profileInfo)
     .then((user) => {
-      if (user) return { status: 200, msg: "Profile information updated"};
-      else return { status: 500, msg: "User could not be found"};
+      if (user) return { status: 200, body: "Profile information updated"};
+      else return { status: 500, body: "User could not be found"};
     })
     .catch(() =>
-      { return { status: 500, message: "Something went wrong adding profile information" }}
+      { return { status: 500, body: "Something went wrong adding profile information" }}
     );
 };
 

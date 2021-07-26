@@ -11,21 +11,21 @@ const registerUser = (name, email, username, password) => {
     return User.User.findOne({ email: email })
     .then((user) => {
       if(user)
-        return { status: 422, msg: 'User with that email already exists'}
+        return { status: 422, body: 'User with that email already exists'}
       return User.User.findOne({ username: username})
       .then((user) => {
         if(user)
-          return { status: 422, msg: 'User with that username already exists'};
+          return { status: 422, body: 'User with that username already exists'};
             return User.addUser(newUser)
             .then((user) => {
               if(user)
-                return { status: 200, msg: 'User registered'}
+                return { status: 200, body: 'User registered'}
             })
             .catch((err) => {throw err})
       })
       .catch((err) => {throw err})
     })
-    .catch(() => {return { status: 500, msg: 'User could not be registered'}})
+    .catch(() => {return { status: 500, body: 'User could not be registered'}})
   }
 
 const checkUserEmail = (email) => {

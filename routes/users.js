@@ -13,9 +13,9 @@ const { json } = require('express');
 
 // Register
 router.post("/register", async (req, res) => {
-  const { status, msg } = await UserRegisterService.registerUser(
+  const { status, body } = await UserRegisterService.registerUser(
     req.body.name, req.body.email, req.body.username, req.body.password);
-    return res.status(status).json(msg);
+    return res.status(status).json(body);
 });
 
 // Authenticate
@@ -23,15 +23,8 @@ router.post("/authenticate", async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
 
-  const response = await UserService.authenticateUser(username, password);
-  if(response.status!=200){
-    return res.status(response.status).json(response.msg);
-  }
-  return res.status(response.status).json({
-    accessToken: response.accessToken,
-    refreshToken: response.refreshToken,
-    user: response.user
-  });
+  const { status, body } = await UserService.authenticateUser(username, password);
+  return res.status(status).json(body);
 });
 
 // Profile
@@ -109,15 +102,15 @@ router.get("/check-email", async (req, res) => {
 });
 
 router.get('/logout', async (req, res) => {
-  const { status, msg } = await RefreshTokenService.removeRefreshToken(req.query.refreshToken);
-  res.status(status).json(msg);
+  const { status, body } = await RefreshTokenService.removeRefreshToken(req.query.refreshToken);
+  res.status(status).json(body);
 })
 
 router.post('/edit-profile', 
 passport.authenticate("jwt", { session: false }),
 async (req, res) => {
-  const { status, msg } = await UserService.updateProfileInformation(req.user, req.body.profileInformation, res);
-  res.status(status).json(msg);
+  const { status, body } = await UserService.updateProfileInformation(req.user, req.body.profileInformation, res);
+  res.status(status).json(body);
 })
 
   // router.post('/update-profile-image', 
