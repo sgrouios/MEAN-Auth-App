@@ -9,6 +9,7 @@ const RefreshToken = require("../models/refreshToken");
 const UserService = require('../services/user-service');
 const RefreshTokenService = require('../services/refresh-token-service');
 const UserRegisterService = require('../services/user-register-service');
+const { json } = require('express');
 
 // Register
 router.post("/register", async (req, res) => {
@@ -22,49 +23,15 @@ router.post("/authenticate", async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
 
-  await User.getUserByUsername(username)
-  .then((user) => {
-    if(!user)
-      return res.status(401).json('User could not be found');
-    // compare password
-    User.comparePassword(password, user.password)
-    .then((isMatch) => {
-      if(!isMatch)
-        return res.status(401).json('User could not be authenticated');
-      // grant tokens
-      const { password, __v, _id, ...payload } = user._doc;
-      payload["sub"] = user._id;
-      const accessToken = jwt.sign(payload, process.env.ACCESS_SECRET, {
-        expiresIn: 36000, //10 hours
-      });
-      const refreshToken = jwt.sign(payload, process.env.REFRESH_SECRET, {
-        expiresIn: 604800, // 1 week
-      });
-      var refreshTokenEntry = new RefreshToken({
-        userId: user._id,
-        token: refreshToken,
-      });
-
-      RefreshToken.addRefreshToken(refreshTokenEntry)
-      .then((token => {
-        if(!token)
-          return res.status(500).json('Error adding refresh token');
-        return res.json({
-          accessToken: accessToken,
-          refreshToken: refreshToken,
-          user: {
-            id: user._id,
-            name: user.name,
-            username: user.username,
-            email: user.email,
-            },
-          });      
-        }))
-      .catch(() => { throw err })
-    })
-    .catch((err) => { throw err })
-  })
-  .catch(() => res.status(500).json('Something went wrong'));
+  const response = await UserService.authenticateUser(username, password);
+  if(response.status!=200){
+    return res.status(response.status).json(response.msg);
+  }
+  return res.status(response.status).json({
+    accessToken: response.accessToken,
+    refreshToken: response.refreshToken,
+    user: response.user
+  });
 });
 
 // Profile

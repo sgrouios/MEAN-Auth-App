@@ -26,10 +26,11 @@ module.exports.addRefreshToken = (refreshToken) => {
             existingToken.token = refreshToken.token;
             return existingToken.save();
         }
-        else
-            return existingToken.save();
+        else{
+            return refreshToken.save();
+        }
     })
-    .catch(() => { throw err });
+    .catch((err) => { throw err });
 }
 
 module.exports.removeRefreshToken = (refreshToken) => {

@@ -47,7 +47,7 @@ const addUser = (newUser) => {
     .catch((err) => {throw err});
 }
 
-const comparePassword = (candidatePassword, hash, callback) => {
+const comparePassword = (candidatePassword, hash) => {
     return bcrypt.compare(candidatePassword, hash);
 }
 
