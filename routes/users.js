@@ -3,13 +3,9 @@ require('dotenv').config({path: path.resolve(__dirname, '../.env')});
 const express = require("express");
 const router = express.Router();
 const passport = require("passport");
-const jwt = require("jsonwebtoken");
-const User = require("../models/user");
-const RefreshToken = require("../models/refreshToken");
 const UserService = require('../services/user-service');
 const RefreshTokenService = require('../services/refresh-token-service');
 const UserRegisterService = require('../services/user-register-service');
-const { json } = require('express');
 
 // Register
 router.post("/register", async (req, res) => {
@@ -44,51 +40,9 @@ router.get(
 );
 
 // Test Refresh
-router.get("/refresh", (req, res) => {
-  // Verify token
-  jwt.verify(req.body.token, process.env.REFRESH_SECRET, (err, decodedPayload) => {
-    if (err) throw err;
-    if (!decodedPayload)
-      res.json(403, {
-        success: false,
-        msg: "Token provided could not be verified",
-      });
-    return;
-  });
-  // Find refresh token in db
-  RefreshToken.findOne({ token: req.body.token }, (err, tokenEntry) => {
-    if (err) throw err;
-    if (!tokenEntry)
-      return res.json(403, {
-        success: false,
-        msg: "This token does not exist",
-      });
-
-    // Get user attached to refreshToken
-    User.getUserById(tokenEntry.userId, (err, user) => {
-      if (err) throw err;
-      if (!user)
-        res.json(422, {
-          success: false,
-          msg: "User could not be found for token supplied",
-        });
-      const { password, __v, _id, ...payload } = user._doc;
-      payload["sub"] = user._id;
-      const accessToken = jwt.sign(payload, process.env.ACCESS_SECRET, {
-        expiresIn: 36000, //10 hours
-      });
-
-      return res.json({
-        accessToken: accessToken,
-        user: {
-          id: user._id,
-          name: user.name,
-          username: user.username,
-          email: user.email,
-        },
-      });
-    });
-  });
+router.get("/refresh", async (req, res) => {
+  const { status, body } = await RefreshTokenService.refreshToken(req.body.token)
+  return res.status(status).json(body);
 });
 
 router.get("/check-username", async (req, res) => {
