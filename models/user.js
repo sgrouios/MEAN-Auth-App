@@ -20,14 +20,10 @@ const UserSchema = mongoose.Schema({
     },
     profileInformation: {
         type: String
-    }/*,
-    profileImage: {
-        data: Buffer,
-        contentType: String
-    }*/
+    }
 });
 
-const User = module.exports = mongoose.model('User', UserSchema);
+const User = mongoose.model('User', UserSchema);
 
 const getUserById = (id, callback) => {
     User.findById(id, callback);
@@ -38,23 +34,20 @@ const getUserByUsername = (username) => {
     return User.findOne(query).exec();
 }
 
-const addUser = (newUser, callback) => {
-    bcrypt.genSalt(10, (err, salt) => {
-        bcrypt.hash(newUser.password, salt, (err, hash) => {
-            if(err)
-             throw err;
+const addUser = (newUser) => {
+    return bcrypt.genSalt(10)
+    .then((salt) => {
+        return bcrypt.hash(newUser.password, salt)
+        .then((hash) => {
             newUser.password = hash;
-            newUser.save(callback);
+            return newUser.save();
         })
+        .catch((err) => {throw err});
     })
+    .catch((err) => {throw err});
 }
 
 const comparePassword = (candidatePassword, hash, callback) => {
-    /* bcrypt.compare(candidatePassword, hash, (err, isMatch) => {
-        if(err) 
-            throw err;
-        callback(null, isMatch);
-    }) */
     return bcrypt.compare(candidatePassword, hash);
 }
 
@@ -73,4 +66,4 @@ const updateUserImage = (user, imageUrl, callback) => {
     user.save(callback); */
 }
 
-module.exports = { getUserById, getUserByUsername, addUser, comparePassword, getUserByEmail, updateProfileInformation, updateUserImage }
+module.exports = { User, getUserById, getUserByUsername, addUser, comparePassword, getUserByEmail, updateProfileInformation, updateUserImage }

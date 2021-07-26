@@ -11,18 +11,10 @@ const RefreshTokenService = require('../services/refresh-token-service');
 const UserRegisterService = require('../services/user-register-service');
 
 // Register
-router.post("/register", (req, res, next) => {
-  let newUser = new User({
-    name: req.body.name,
-    email: req.body.email,
-    username: req.body.username,
-    password: req.body.password,
-  });
-
-  User.addUser(newUser, (err, user) => {
-    if (err) res.status(400).json("User could not be registered");
-    else res.status(200).json("User registered");
-  });
+router.post("/register", async (req, res) => {
+  const { status, msg } = await UserRegisterService.registerUser(
+    req.body.name, req.body.email, req.body.username, req.body.password);
+    return res.status(status).json(msg);
 });
 
 // Authenticate
