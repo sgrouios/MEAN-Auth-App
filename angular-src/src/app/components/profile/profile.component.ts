@@ -88,8 +88,7 @@ export class ProfileComponent extends Loading implements OnInit {
     reader.readAsDataURL(file);
     reader.onload = () => {
       const profileImage = reader.result?.toString() as string;
-      console.log(profileImage);
-/*       this.userService.updateProfileImage(profileImage)
+      this.userService.updateProfileImage(profileImage)
       .pipe(
         catchError((err: HttpErrorResponse) => {
           if(err.status === 413){
@@ -99,10 +98,11 @@ export class ProfileComponent extends Loading implements OnInit {
             this.notifier.notify('error', `Could not update user's profile image`);
           return EMPTY;
         }),
+        concatMap(() => this.getProfileData()),
         tap(() => {
           this.notifier.notify('success', 'Updated user profile image');
         })
-      ).subscribe(); */
+      ).subscribe();
     }
   }
 }

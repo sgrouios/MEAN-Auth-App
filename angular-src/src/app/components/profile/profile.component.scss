@@ -30,12 +30,12 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    max-height: 150px;
-    max-width: 150px;
+    height: 128px;
+    width: 128px;
     margin: auto;
     border-radius: 50%;
     overflow: hidden;
-    border: 1px grey solid;
+    border: 1px black solid;
 }
 
 .profile-pic img {

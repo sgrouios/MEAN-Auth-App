@@ -6,6 +6,7 @@ const passport = require("passport");
 const UserService = require('../services/user-service');
 const RefreshTokenService = require('../services/refresh-token-service');
 const UserRegisterService = require('../services/user-register-service');
+const UserProfileService = require('../services/user-profile-service');
 
 // Register
 router.post("/register", async (req, res) => {
@@ -27,15 +28,9 @@ router.post("/authenticate", async (req, res) => {
 router.get(
   "/profile",
   passport.authenticate("jwt", { session: false }),
-  (req, res) => {
-    res.json(
-      { 
-        id: req.user._id, 
-        name: req.user.name, 
-        email: req.user.email, 
-        username: req.user.username, 
-        profileInformation: req.user.profileInformation
-    });
+  async (req, res) => {
+    const { status, body } = await UserProfileService.getProfile(req.user);
+    res.status(status).json(body);
   }
 );
 
@@ -63,22 +58,16 @@ router.get('/logout', async (req, res) => {
 router.post('/edit-profile', 
 passport.authenticate("jwt", { session: false }),
 async (req, res) => {
-  const { status, body } = await UserService.updateProfileInformation(req.user, req.body.profileInformation, res);
+  const { status, body } = await UserProfileService.updateProfileInformation(req.user._id, req.body.profileInformation)
   res.status(status).json(body);
 })
 
-  // router.post('/update-profile-image', 
-  // passport.authenticate("jwt", { session: false }),
-  // (req, res) => {
-  //   /* Use Amazon S3 to store url instead */
-  //   User.updateUserImage(req.user, req.body.imageUrl, (err, user) => {
-  //     if(err) 
-  //       return res.status(422).json('Could not update user image');
-  //     if(!user)
-  //       return res.status(500).json('User could not be found');
-  //     else
-  //       return res.status(200).json('User profile image updated');
-  //   })
-  // });
+router.post('/update-profile-image', 
+passport.authenticate("jwt", { session: false }),
+async (req, res) => {
+  const { status, body } = await UserProfileService.updateProfileImage(req.user._id, req.body?.imageUrl);
+  res.status(status).json(body);
+});
+
 
 module.exports = router;

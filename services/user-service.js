@@ -53,15 +53,15 @@ const authenticateUser = async (username, password) => {
     .catch(() => { return { status: 500, msg: 'Something went wrong'}});
 }
 
-const updateProfileInformation = (user, profileInfo) => {
-  return User.updateProfileInformation(user, profileInfo)
-    .then((user) => {
-      if (user) return { status: 200, body: "Profile information updated"};
+const uploadUserImage = (user, image) => {
+  return User.updateUserImage(user, image)
+  .then(user => {
+    if (user) return { status: 200, body: "Profile image uploaded"};
       else return { status: 500, body: "User could not be found"};
-    })
-    .catch(() =>
-      { return { status: 500, body: "Something went wrong adding profile information" }}
-    );
-};
+  })
+  .catch(() => {
+   return { status: 500, body: "Something went wrong uploading profile image" }
+  })
+}
 
-module.exports = { authenticateUser, updateProfileInformation };
+module.exports = { authenticateUser, uploadUserImage };

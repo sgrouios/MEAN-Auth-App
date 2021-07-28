@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const UserProfile = require('../models/userProfile');
 
 const registerUser = (name, email, username, password) => {
     let newUser = new User.User({
@@ -18,8 +19,15 @@ const registerUser = (name, email, username, password) => {
           return { status: 422, body: 'User with that username already exists'};
             return User.addUser(newUser)
             .then((user) => {
-              if(user)
-                return { status: 200, body: 'User registered'}
+              if(user){
+                return UserProfile.addProfile(new UserProfile.UserProfile({ userId: user._id}))
+                .then((profile) => {
+                  if(profile){
+                    return { status: 200, body: 'User registered'}
+                  }
+                })
+                .catch((err) => { { return { status: 500, body: err}}});
+              }
             })
             .catch((err) => {throw err})
       })

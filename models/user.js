@@ -17,9 +17,6 @@ const UserSchema = mongoose.Schema({
     password: {
         type: String, 
         required: true
-    },
-    profileInformation: {
-        type: String
     }
 });
 
@@ -56,14 +53,4 @@ const getUserByEmail = (email) => {
     return User.findOne(query).exec();
 }
 
-const updateProfileInformation = (user, profileInfo) => {
-    user.profileInformation = profileInfo;
-    return user.save();
-}
-
-const updateUserImage = (user, imageUrl, callback) => {
-    /* user.profileImage = imageUrl;
-    user.save(callback); */
-}
-
-module.exports = { User, getUserById, getUserByUsername, addUser, comparePassword, getUserByEmail, updateProfileInformation, updateUserImage }
+module.exports = { User, getUserById, getUserByUsername, addUser, comparePassword, getUserByEmail }
