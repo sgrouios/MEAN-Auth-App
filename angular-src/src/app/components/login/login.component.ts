@@ -35,7 +35,7 @@ export class LoginComponent extends Loading {
 
   onLoginSubmit(): void {
     if(this.form.valid){
-      this.isLoadingSubject$.next(true);
+      this.setLoading(true);
       this.authService.authenticateUser(<AuthenticateUser>this.form.value)
       .pipe(
         tap(() => { 
@@ -48,7 +48,7 @@ export class LoginComponent extends Loading {
           this.notifier.notify('error', 'User could not be authenticated');
           return EMPTY; 
         }),
-        finalize(() => this.isLoadingSubject$.next(false))
+        finalize(() => this.setLoading(false))
       ).subscribe();
     }
   }

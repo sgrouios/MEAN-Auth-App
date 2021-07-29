@@ -56,24 +56,28 @@ export class ProfileComponent extends Loading implements OnInit {
   }
 
   onProfileSubmit(): void {
-    this.isLoadingSubject$.next(true);
+    this.setLoading(true);
     this.userService.editProfile(this.profileInformation)
     .pipe(
-      catchError((err) => {
+      concatMap(() => this.getProfileData()),      
+      catchError(() => {
         this.notifier.notify('error', 'Profile could not be updated');
         return EMPTY;
       }),
-      concatMap(() => this.getProfileData()),      
       tap(() => { 
         this.notifier.notify('success', 'User profile updated');
         this.changeProfileEditable(false);
       }),
-      finalize(() => this.isLoadingSubject$.next(false))
+      finalize(() => this.setLoading(false))
     ).subscribe();
   }
 
   updateProfile(user: UserProfile): void {
     this.profileInformation = user.profileInformation;
+    this.setUserProfile(user);
+  }
+
+  setUserProfile(user: UserProfile) : void {
     this.userProfileSubject$.next(user);
   }
 
@@ -88,21 +92,25 @@ export class ProfileComponent extends Loading implements OnInit {
     reader.readAsDataURL(file);
     reader.onload = () => {
       const profileImage = reader.result?.toString() as string;
-      this.userService.updateProfileImage(profileImage)
-      .pipe(
-        catchError((err: HttpErrorResponse) => {
-          if(err.status === 413){
-            this.notifier.notify('error', `Image size too large`);
-          }
-          else
-            this.notifier.notify('error', `Could not update user's profile image`);
-          return EMPTY;
-        }),
-        concatMap(() => this.getProfileData()),
-        tap(() => {
-          this.notifier.notify('success', 'Updated user profile image');
-        })
-      ).subscribe();
+      this.updateProfileImage(profileImage).subscribe();
     }
+  }
+
+  updateProfileImage(image: string): Observable<UserProfile> {
+    return this.userService.updateProfileImage(image)
+    .pipe(
+      catchError((err: HttpErrorResponse) => {
+        if(err.status === 413){
+          this.notifier.notify('error', `Image size too large`);
+        }
+        else
+          this.notifier.notify('error', `Could not update user's profile image`);
+        return EMPTY;
+      }),
+      concatMap(() => this.getProfileData()),
+      tap(() => {
+        this.notifier.notify('success', 'Updated user profile image');
+      })
+    )
   }
 }

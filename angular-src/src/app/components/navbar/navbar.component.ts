@@ -25,16 +25,16 @@ export class NavbarComponent {
   onLogoutClick(): void {
     this.authService.logout(this.localStorageService.getRefreshToken())
     .pipe(
-      tap(() => this.tokenService.setLoginState(false)),
       catchError(() => { 
         this.notifierService.notify('error', 'User could not be logged out');
         return EMPTY;
-    }),
-    tap(() => 
-    {
-      this.notifierService.notify('success', 'User successfully logged out');
-      this.router.navigate(['login']);
-    })
+      }),
+      tap(() => 
+      {
+        this.tokenService.setLoginState(false)
+        this.notifierService.notify('success', 'User successfully logged out');
+        this.router.navigate(['login']);
+      })
     ).subscribe();
   }
 
