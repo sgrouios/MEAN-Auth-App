@@ -7,9 +7,7 @@ import { catchError, finalize, tap } from 'rxjs/operators';
 import { Loading } from 'src/app/base/loading/loading';
 import { User } from 'src/app/models/user';
 import { AuthService } from 'src/app/services/auth.service';
-import { UserService } from 'src/app/services/user.service';
-import { CheckEmailValidator } from 'src/app/validators/check-email-validator';
-import { CheckUsernameValidator } from 'src/app/validators/username-validator';
+import { ValidatorService } from 'src/app/services/validator.service';
 
 @Component({
   selector: 'app-register',
@@ -20,10 +18,10 @@ export class RegisterComponent extends Loading {
 
   form: FormGroup = this.initForm();
 
-  constructor(private userService: UserService,
-              private notifier: NotifierService,
+  constructor(private notifier: NotifierService,
               private authService: AuthService,
-              private router: Router) {
+              private router: Router,
+              private validatorService: ValidatorService) {
                 super();
               }
 
@@ -32,18 +30,18 @@ export class RegisterComponent extends Loading {
       name: new FormControl('', Validators.required),
       username: new FormControl('', 
       Validators.required, 
-      CheckUsernameValidator.checkUsername(this.userService)),
+      this.validatorService.checkUsername()),
       email: new FormControl('', [
         Validators.required, 
         Validators.email],
-        CheckEmailValidator.checkEmail(this.userService)),
+        this.validatorService.checkEmail()),
       password: new FormControl('', Validators.required)
     });
   }
 
   onRegisterSubmit() : void {
     if(this.form.valid){
-      this.isLoadingSubject$.next(true);
+      this.setLoading(true);
       const user = <User>this.form.value;
       this.authService.registerUser(user)
       .pipe(
@@ -55,7 +53,7 @@ export class RegisterComponent extends Loading {
           this.notifier.notify('success', 'User successfully registered');
           this.router.navigate(['login']);
         }),
-        finalize(() => this.isLoadingSubject$.next(false))
+        finalize(() => this.setLoading(false))
       ).subscribe();
     }
   }
