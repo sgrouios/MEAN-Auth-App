@@ -8,7 +8,7 @@ import { ValidatorService } from 'src/app/services/validator.service';
 
 import { RegisterComponent } from './register.component';
 
-fdescribe('RegisterComponent', () => {
+describe('RegisterComponent', () => {
   let component: RegisterComponent;
   let fixture: ComponentFixture<RegisterComponent>;
   let mockNotifierService: jasmine.SpyObj<NotifierService>;

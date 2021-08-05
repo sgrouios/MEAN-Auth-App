@@ -6,8 +6,8 @@ import {
   HttpRequest,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { EMPTY, Observable, throwError } from 'rxjs';
-import { catchError, concatMap, mergeMap, tap } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { catchError, concatMap, tap } from 'rxjs/operators';
 import { TokenService } from '../services/token.service';
 
 @Injectable()

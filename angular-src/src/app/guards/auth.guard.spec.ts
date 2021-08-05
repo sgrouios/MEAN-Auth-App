@@ -1,5 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
+import { of } from 'rxjs';
+import { take } from 'rxjs/operators';
 import { TokenService } from '../services/token.service';
 
 import { AuthGuard } from './auth.guard';
@@ -23,5 +25,16 @@ describe('AuthGuard', () => {
 
   it('should be created', () => {
     void expect(guard).toBeTruthy();
+  });
+
+  it('canActivate should return true if user is loggedIn', () => {
+    mockTokenService.isLoggedIn.and.returnValue(of(true));
+    guard.canActivate().pipe(take(1)).subscribe(x => void expect(x).toBeTrue());
+  });
+
+  it('canActivate should return UrlTree if user is not logged in', () => {
+    mockTokenService.isLoggedIn.and.returnValue(of(false));
+    guard.canActivate().pipe(take(1)).subscribe();
+    void expect(mockRouter.parseUrl).toHaveBeenCalledWith('');
   });
 });
