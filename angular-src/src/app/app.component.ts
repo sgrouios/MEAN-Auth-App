@@ -9,8 +9,6 @@ import { TokenService } from './services/token.service';
 })
 export class AppComponent implements OnInit {
 
-  title = 'angular-src';
-
   constructor(private tokenService: TokenService) { }
 
   ngOnInit(): void {
