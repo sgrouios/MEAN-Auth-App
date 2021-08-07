@@ -3,7 +3,7 @@ import { UserService } from './user.service';
 
 import { ValidatorService } from './validator.service';
 
-describe('ValidatorService', () => {
+fdescribe('ValidatorService', () => {
   let service: ValidatorService;
   let mockUserService: jasmine.SpyObj<UserService>;
 

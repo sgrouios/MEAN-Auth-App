@@ -40,6 +40,7 @@ export class TokenService {
   getAuthHeader(): Observable<string> {
     return this.getAccessToken()
     .pipe(
+      catchError((err) => throwError(err)),
       map((token: string) => `Bearer ${token}`)
     )
   }

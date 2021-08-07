@@ -5,9 +5,9 @@ import { TokenUser } from '../models/tokens';
   providedIn: 'root'
 })
 export class LocalStorageService {
-  private readonly ACCESS_TOKEN = 'accessToken';
-  private readonly REFRESH_TOKEN = 'refreshToken';
-  private readonly USER = 'user';
+  readonly ACCESS_TOKEN = 'accessToken';
+  readonly REFRESH_TOKEN = 'refreshToken';
+  readonly USER = 'user';
 
   setAccessToken(accessToken: string): void {
     localStorage.setItem(this.ACCESS_TOKEN, accessToken);
